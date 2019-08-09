@@ -1,0 +1,166 @@
+<ion-header>
+  <ion-navbar hideBackButton>
+    <ion-title>{{ (type === 'buy' ? "CryptoExchange.Title.Buy" : "CryptoExchange.Title.Sell") | translate }}</ion-title>
+    <ion-buttons end>
+      <button ion-button clear navPop>
+        <ion-icon name="bank-crossBlack"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content class="ScrollAuto" no-bounce>
+  <form [formGroup]="exchangeForm" class="CryptoExchange" *ngIf="!loading; else loader">
+    <ion-list no-lines  class="CryptoExchange-from">
+      <ion-item (click)="openCurrencies('from')">
+        <div item-start>
+          <div class="CryptoExchange-preparatory">
+            {{ "CryptoExchange.PayFrom" | translate }}:
+          </div>
+          <div class="CryptoExchange-select">
+            <wheel #fromSelect [data]="fromCurrencies[0]"
+                #exchangeFromModel="ngModel"
+                [(ngModel)]="exchangeFrom"
+                [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="fromCurrencyChange($event)"
+                name="exchangeFrom" required></wheel>
+          </div>
+        </div>
+        <div item-end class="CryptoExchange-info">
+          <span [innerHTML]="fromBalance | bcurrency:selectedAccFrom.currency"></span>
+        </div>
+        <span class="CryptoExchange-arrow"><ion-icon class="bank-select-arrow"></ion-icon></span>
+        <!-- <ion-icon item-end class="CryptoExchange-arrow"></ion-icon> -->
+      </ion-item>
+      <amount-base-field
+        *ngIf="selectedAccFrom.currency === 'EUR' || (selectedAccFrom.currency !== 'EUR' && !operationDisabled)"
+        (focusout)="showTouchedError('from')"
+        [title]="'CryptoExchange.PayFrom.ExchangeAmount' | translate"
+        [placeholder]="'CryptoExchange.PayFrom.EnterAmount' | translate"
+        [currencyCode]="selectedCurrFrom.currency"
+        [decimalChar]="','"
+        [decimalLength]="selectedCurrFrom.significantDigits"
+        [isInvalid]="(from.invalid && from.dirty) || (from.invalid && from.touched)"
+        [initValue]="from.value"
+        (updateValue)="updateFromAmount($event)"
+        [disabled]="operationDisabled"
+      >
+      </amount-base-field>
+      <ion-item *ngIf="selectedAccFrom.currency !== 'EUR' && operationDisabled" detail-none no-lines class="CryptoExchange-limit-exceeded">
+        {{ "CryptoExchange.Error.ExchangeLimitExceeded" | translate: { currency: cryptoRate.shortTitle } }}
+      </ion-item>
+      <ion-item detail-none no-lines class="CryptoExchange-note">
+        <div item-start>
+          <span>1 {{cryptoRate.shortTitle}} ≈
+           <span [innerHTML]="(type === 'buy' ? cryptoRate.ask : cryptoRate.bid) | bcurrency"></span>
+          </span>
+        </div>
+        <div *ngIf="!operationDisabled && ((from.invalid && from.dirty) || (from.invalid && from.touched))">
+          <div *ngIf="from.hasError('required')" class="error-message">
+            {{ "CryptoExchange.Error.ExchangeAmountRequired" | translate }}
+          </div>
+          <div *ngIf="from.hasError('pattern')" class="error-message">
+            {{ "CryptoExchange.Error.OnlyNumbersAvailable" | translate }}
+          </div>
+          <div *ngIf="from.hasError('min')" class="error-message">
+            {{ (type === 'buy' ? "CryptoExchange.Error.MinimumBuyAmount" : "CryptoExchange.Error.MinimumSellAmount") | translate }} =<br>
+            <span [innerHTML]="minAmountFrom | bcurrency:selectedCurrFrom.currency"></span>
+          </div>
+          <div *ngIf="from.hasError('nonzero')" class="error-message">
+            {{ "CryptoExchange.Error.ValueShouldBeGreaterThan" | translate }} 0 {{selectedCurrFrom.currency}}
+          </div>
+          <div *ngIf="from.hasError('max')" class="error-message">
+            <span *ngIf="selectedAccFrom.currency === 'EUR' && from.value > maxAmountEUR">{{ "CryptoExchange.Error.EURLimitExceeded" | translate }}</span>
+            <span *ngIf="selectedAccFrom.balance < from.value">{{ "CryptoExchange.Error.NotEnoughMoney" | translate }}</span>
+            <span *ngIf="selectedAccFrom.balance > maxAmountFrom">
+              {{ (type === 'buy' ? "CryptoExchange.Error.MaximumBuyAmount" : "CryptoExchange.Error.MaximumSellAmount") | translate }} =<br>
+              <span [innerHTML]="maxAmountFrom | bcurrency:selectedCurrFrom.currency"></span>
+            </span>
+          </div>
+        </div>
+      </ion-item>
+      <ion-item no-lines class="CryptoExchange-check">
+        <ion-label [innerHTML]="'CryptoExchange.PayFrom.UseEverything' | translate: { currency: selectedAccFrom.currency }"></ion-label>
+        <ion-checkbox (ionChange)="selectAllAmount()"></ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <button ion-button clear class="CryptoExchange-change" (click)="changeDirection()">
+      <ion-icon class="bank-cryptoChange-bottom"></ion-icon>
+    </button>
+    <ion-list no-lines class="CryptoExchange-to">
+      <ion-item (click)="openCurrencies('to')">
+        <div item-start>
+          <div class="CryptoExchange-preparatory">
+            {{ "CryptoExchange.ReceiveTo" | translate }}:
+          </div>
+          <div class="CryptoExchange-select">
+            <wheel [data]="toCurrencies[0]"
+                #toSelect
+                #exchangeToModel="ngModel"
+                [(ngModel)]="exchangeTo"
+                [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="toCurrencyChange($event)"
+                name="exchangeTo" required></wheel>
+          </div>
+        </div>
+        <div item-end class="CryptoExchange-info">
+          <span [innerHTML]="toBalance | bcurrency:selectedAccTo.currency"></span>
+        </div>
+        <span class="CryptoExchange-arrow"><ion-icon class="bank-select-arrow"></ion-icon></span>
+      </ion-item>
+      <amount-base-field
+        *ngIf="selectedAccTo.currency === 'EUR' || (selectedAccTo.currency !== 'EUR' && !operationDisabled)"
+        (focusout)="showTouchedError('to')"
+        [title]="'CryptoExchange.ReceiveTo.ReceiveAmount' | translate"
+        [placeholder]="'CryptoExchange.ReceiveTo.EnterAmount' | translate"
+        [currencyCode]="selectedCurrTo.currency"
+        [decimalChar]="','"
+        [decimalLength]="selectedCurrTo.significantDigits"
+        [isInvalid]="(to.invalid && to.dirty) || (to.invalid && to.touched)"
+        [initValue]="to.value"
+        (updateValue)="updateToAmount($event)"
+        [disabled]="operationDisabled"
+      >
+      </amount-base-field>
+      <ion-item *ngIf="selectedAccTo.currency !== 'EUR' && operationDisabled" detail-none no-lines class="CryptoExchange-limit-exceeded">
+        {{ "CryptoExchange.Error.ExchangeLimitExceeded" | translate: { currency: cryptoRate.shortTitle } }}
+      </ion-item>
+      <div *ngIf="!operationDisabled && ((to.invalid && to.dirty) || (to.invalid && to.touched))">
+          <div *ngIf="to.hasError('required')" class="error-message">
+            {{ "CryptoExchange.Error.ReceiveAmountRequired" | translate }}
+          </div>
+          <div *ngIf="to.hasError('pattern')" class="error-message">
+            {{ "CryptoExchange.Error.OnlyNumbersAvailable" | translate }}
+          </div>
+          <div *ngIf="to.hasError('min')" class="error-message">
+            {{ (type === 'buy' ? "CryptoExchange.Error.MinimumBuyAmount" : "CryptoExchange.Error.MinimumSellAmount") | translate }} =<br>
+            <span [innerHTML]="minAmountTo | bcurrency:selectedCurrTo.currency"></span>
+          </div>
+          <div *ngIf="to.hasError('max')" class="error-message">
+            <span *ngIf="selectedAccTo.currency === 'EUR' && to.value > maxAmountEUR">{{ "CryptoExchange.Error.EURLimitExceeded" | translate }}</span>
+            <span *ngIf="selectedAccTo.currency !== 'EUR'" >
+              {{ (type === 'buy' ? "CryptoExchange.Error.MaximumBuyAmount" : "CryptoExchange.Error.MaximumSellAmount") | translate }} =<br>
+              <span [innerHTML]="maxAmountTo | bcurrency:selectedCurrTo.currency"></span>
+            </span>
+          </div>
+      </div>
+    </ion-list>
+    <div class="CryptoExchange-next">
+      <button ion-button round large block
+        (click)="openConfirm()"
+        [disabled]="operationDisabled"
+      >
+          <ion-icon ios="ios-arrow-forward" md="ios-arrow-round-forward"></ion-icon>
+          <span *ngIf="!isExchange">
+            {{ "CryptoExchange.NextButton" | translate }}
+          </span>
+          <ion-spinner *ngIf="isExchange" name="ios"></ion-spinner>
+      </button>
+    </div>
+  </form>
+  <ng-template #loader>
+    <div class="CryptoExchange-loader" *ngIf="loading">
+      <ion-spinner name="ios"></ion-spinner>
+    </div>
+  </ng-template>
+</ion-content>

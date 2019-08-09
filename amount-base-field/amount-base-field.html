@@ -1,0 +1,38 @@
+<form [formGroup]="amountForm" [class.isError]="isInvalid">
+
+  <ng-content></ng-content>
+
+  <div class="Transfer-summary">
+    <table>
+      <tr>
+        <th>{{ title }}</th>
+        <th>
+          <div class="Transfer-sum">
+            <ion-input *ngIf="decimalChar === ','"
+                       formControlName="amount"
+                       type="tel"
+                       pattern="[0-9]*"
+                       decimal="true"
+                       decimal-char=","
+                       [placeholder]="placeholder"
+                       [disabled]="disabled"
+                       (ionBlur)="onBlurCheckValue(amount.value)">
+            </ion-input>
+            <ion-input *ngIf="decimalChar === '.'"
+                       formControlName="amount"
+                       type="tel"
+                       decimal="true"
+                       [placeholder]="placeholder"
+                       [disabled]="disabled"
+                       (ionBlur)="onBlurCheckValue(amount.value)">
+            </ion-input>
+            <span>
+              <small>{{ currencyCode }}</small>
+            </span>
+          </div>
+        </th>
+      </tr>
+    </table>
+  </div>
+
+</form>

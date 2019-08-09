@@ -1,0 +1,362 @@
+page-crypto-exchange {
+  .header .toolbar-title {
+    text-transform: capitalize;
+  }
+
+  amount-base-field .Transfer-summary {
+    margin: 0.5rem 0 0;
+  }
+}
+
+
+.CryptoExchange {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  font-family: 'SFProText';
+
+  .item {
+    position: relative;
+    padding: 0;
+    min-height: 0;
+    background: transparent;
+    align-items: flex-end;
+  }
+
+  .list {
+    margin: 0;
+  }
+
+  .CryptoExchange-from {
+    padding: 0.9333rem 1rem 2rem;
+
+    .error-message {
+      font-size: 0.666rem;
+      color: $red4;
+      text-align: right;
+      margin-top: 4px;
+      width: 140px;
+      margin-left: auto;
+      white-space: initial;
+    }
+  }
+
+  .CryptoExchange-to {
+    padding: 1.6666rem 1rem 1.6rem;
+    background: $grey14;
+
+    .error-message {
+      font-size: 0.666rem;
+      color: $red4;
+      text-align: right;
+      margin-top: 4px;
+      width: 140px;
+      margin-left: auto;
+      white-space: initial;
+    }
+  }
+
+  .item-inner,
+  .item-ios.item-block .item-inner {
+    padding: 0;
+  }
+
+  .item-ios [item-left],
+  .item-ios [item-start] {
+    margin: 0;
+  }
+
+  &-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .CryptoExchange-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+    margin: 0 1.06rem 0 0;
+    color: $black; // $grey7;
+    font-size: 1.13333rem;
+    text-align: right;
+    overflow: hidden;
+
+    &--empty {
+      color: $grey11;
+    }
+
+    .input {
+      position: absolute;
+      opacity: 0;
+      left: 0;
+      bottom: 0;
+      top: 0;
+      right: 0;
+      z-index: 2;
+    }
+
+    .text-input {
+      margin: 0;
+      padding: 0;
+      text-align: right;
+      width: 100%;
+    }
+
+    .CryptoExchange-value {
+      position: relative;
+      padding-right: 0.3rem;
+    }
+  }
+
+  .CryptoExchange-limit-exceeded {
+    border: solid 2px $grey25 !important;
+    border-radius: 5px;
+    color: $red4;
+    padding: 10px;
+    font-size: 1.25rem;
+    margin: 10px 0;
+
+    .label {
+      text-overflow: unset;
+      white-space: inherit;
+    }
+  }
+
+  .CryptoExchange-info {
+    margin: 0;
+    padding-right: 1.4666rem;
+    color: $grey25;
+    font-family: 'SFProDisplay';
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: right;
+    letter-spacing: 0.4pt;
+
+    small {
+      font-size: inherit;
+    }
+  }
+
+  .CryptoExchange-note {
+    margin-top: 0.46667rem;
+    color: $grey25;
+    font-family: 'SFProDisplay';
+    font-size: 0.86667rem;
+    font-weight: 400;
+    align-items: center;
+    letter-spacing: 0.3pt;
+
+    .label {
+      margin: 0;
+    }
+
+    small {
+      font-size: inherit;
+    }
+  }
+
+  .CryptoExchange-preparatory {
+    margin-bottom: 0.2rem;
+    color: $grey25;
+    font-family: 'SFProDisplay';
+    font-size: 0.86667rem;
+    font-weight: 400;
+    letter-spacing: 0.3pt;
+  }
+
+  .CryptoExchange-field {
+    width: auto;
+    min-height: 3.4666rem;
+    padding: 0;
+    margin: 0.8rem 0 0;
+    border: 2px solid $green1!important;
+    border-radius: 0.33rem;
+    background: $white;
+    align-items: center;
+
+    .label {
+      margin: 0;
+      padding: 1.26rem 0 1.26rem 1.06rem;
+      color: $black;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    &--disabled {
+      background-color: $grey29;
+      border-color: $grey29 !important;
+
+      .label {
+        color: $grey9;
+      }
+
+      .CryptoExchange-value,
+      .CryptoExchange-group {
+        color: $grey9;
+      }
+      & + .CryptoExchange-note {
+        color: $grey9;
+      }
+
+      &-amount {
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 0;
+        color: $grey9;
+      }
+
+      &-recipient {
+        position: absolute;
+        bottom: -3px;
+        font-size: 10px;
+        color: $grey9;
+      }
+    }
+
+    &--error {
+      border-color: $red4 !important;
+
+      .CryptoExchange-value {
+        color: $red4;
+      }
+      & + .CryptoExchange-note {
+        color: $red4;
+      }
+
+      &-amount {
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 0;
+        color: $red4;
+      }
+
+      &-recipient {
+        position: absolute;
+        bottom: -3px;
+        font-size: 10px;
+        color: $red4;
+      }
+    }
+  }
+
+  .CryptoExchange-check {
+    margin-top: 0.53333rem;
+    font-size: 0.8rem;
+    color: $grey7;
+
+    .label {
+      margin: 0;
+    }
+
+    ion-checkbox, .checkbox-ios {
+      margin: 0 0.53333rem 0 0;
+
+      .checkbox-icon {
+        width: 1.466667rem;
+        height: 1.466667rem;
+
+        &.checkbox-checked {
+          background-color: transparent;
+          border-color: $grey8;
+
+          .checkbox-inner {
+            border-color: $grey8;
+          }
+        }
+      }
+    }
+
+    b {
+      font-weight: 600;
+    }
+
+    .input-wrapper {
+      align-self: center;
+    }
+  }
+
+  .CryptoExchange-next {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.4rem 1.93333rem 1.26667rem;
+
+    .button {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1rem;
+      border: 2px solid $green1;
+      background: white;
+      color: $green1;
+
+      &[disabled] {
+        opacity: 0.5;
+      }
+
+      .icon {
+        position: absolute;
+        top: 50%;
+        left: 1.33rem;
+        margin-top: -0.6rem;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .CryptoExchange-change {
+    margin: -1.53rem auto -1.53rem;
+    padding: 0;
+    width: 3.06rem;
+    height: 3.06rem;
+    border-radius: 50%;
+    background-color: $white;
+
+    .icon {
+      width: 3.06rem;
+      height: 3.06rem;
+      background-size: 100% auto;
+    }
+  }
+
+  .wheel,
+  .select-ios .select-text,
+  .select-text {
+    position: static;
+    min-height: 1.2rem;
+    font-family: 'SFProDisplay';
+    font-weight: 600;
+    font-size: 1rem;
+    color: $black;
+
+    * {
+      font-size: 1rem;
+    }
+  }
+
+  .CryptoExchange-arrow {
+    position: absolute;
+    bottom: -0.367rem;
+    right: -0.3333rem;
+    height: 1.866667rem;
+    max-height: 100%;
+    margin: 0!important;
+
+    ion-icon {
+      width: 1.866667rem;
+      height: 1.866667rem;
+    }
+  }
+
+  .select-icon .select-icon-inner,
+  .select-ios .select-icon .select-icon-inner {
+    border-top-color: $black;
+  }
+
+
+}
